@@ -2,7 +2,8 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local maxClickDistance = 10
+local maxClickDistance = 30
+local stonePart = workspace.Mine.Stone
 
 local function isPartNearPlayer(part)
     local playerPosition = Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and Players.LocalPlayer.Character.HumanoidRootPart.Position
@@ -54,11 +55,10 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
     if not gameProcessedEvent then
         -- Kiểm tra xem người chơi nhấn chuột trái
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            -- Theo dõi sự kiện click và thực hiện nhanh chóng
-            for _, part in pairs(workspace:GetDescendants()) do
-                if part:IsA("Part") and part.Name == "Stone" then
-                    handleClickAndFireServer(part)
-                end
+            -- Kiểm tra xem Stone nằm trong khoảng cách cho phép
+            if isPartNearPlayer(stonePart) then
+                -- Theo dõi sự kiện click và thực hiện nhanh chóng
+                handleClickAndFireServer(stonePart)
             end
         end
     end
