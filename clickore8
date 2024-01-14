@@ -21,28 +21,41 @@ local function handleClickAndFireServer(part)
     if part.Name == "Stone" then
         print("Clicked on Stone part!")
 
-        -- Gửi sự kiện từ xa tới server - PinglessMine
-        local pinglessMineEvent = ReplicatedStorage:FindFirstChild("PinglessMine")
-        if pinglessMineEvent then
-            pinglessMineEvent:FireServer()
-        else
-            warn("RemoteEvent 'PinglessMine' not found.")
-        end
+        -- Kiểm tra CFrame của Part và thực hiện sự kiện click vào CFrame
+        local player = Players.LocalPlayer
+        local character = player.Character
+        local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
 
-        -- Gửi sự kiện từ xa tới server - MineOre
-        local mineOreEvent = ReplicatedStorage:FindFirstChild("MineOre")
-        if mineOreEvent then
-            mineOreEvent:FireServer()
-        else
-            warn("RemoteEvent 'MineOre' not found.")
-        end
+        if humanoidRootPart then
+            local partCFrame = part.CFrame
+            local clickPosition = part.Position
 
-        -- Gửi sự kiện từ xa tới server - MineEvent
-        local mineEvent = ReplicatedStorage:FindFirstChild("MineEvent")
-        if mineEvent then
-            mineEvent:FireServer()
-        else
-            warn("RemoteEvent 'MineEvent' not found.")
+            -- Gửi sự kiện từ xa tới server - PinglessMine (ví dụ)
+            local pinglessMineEvent = ReplicatedStorage:FindFirstChild("PinglessMine")
+            if pinglessMineEvent then
+                local args = {partCFrame, clickPosition}
+                pinglessMineEvent:FireServer(unpack(args))
+            else
+                warn("RemoteEvent 'PinglessMine' not found.")
+            end
+
+            -- Gửi sự kiện từ xa tới server - MineOre (ví dụ)
+            local mineOreEvent = ReplicatedStorage:FindFirstChild("MineOre")
+            if mineOreEvent then
+                local args = {partCFrame, clickPosition}
+                mineOreEvent:FireServer(unpack(args))
+            else
+                warn("RemoteEvent 'MineOre' not found.")
+            end
+
+            -- Gửi sự kiện từ xa tới server - MineEvent (ví dụ)
+            local mineEvent = ReplicatedStorage:FindFirstChild("MineEvent")
+            if mineEvent then
+                local args = {partCFrame, clickPosition}
+                mineEvent:FireServer(unpack(args))
+            else
+                warn("RemoteEvent 'MineEvent' not found.")
+            end
         end
     end
 end
