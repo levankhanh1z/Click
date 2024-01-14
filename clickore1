@@ -15,6 +15,11 @@ local function isPartNearPlayer(part)
     return false
 end
 
+-- Local function để kiểm tra xem một Part có phải là "Block" không
+local function isBlockPart(part)
+    return part:IsA("Part") and part.Shape == Enum.PartType.Block
+end
+
 -- Local function để xử lý sự kiện click
 local function handleClick(part)
     print("Clicked on part:", part.Name)
@@ -29,8 +34,8 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
             local hit = mouse.Hit
             local part = workspace:FindPartOnRayWithIgnoreList(Ray.new(hit.p, Vector3.new(0, -1, 0)), {Players.LocalPlayer.Character})
 
-            if part and part:IsA("Part") and isPartNearPlayer(part) then
-                -- Nếu Part gần người chơi, xử lý sự kiện click
+            if part and isBlockPart(part) and isPartNearPlayer(part) then
+                -- Nếu Part là "Block" và gần người chơi, xử lý sự kiện click
                 handleClick(part)
             end
         end
