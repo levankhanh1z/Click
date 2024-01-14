@@ -22,11 +22,7 @@ local function handleClickAndFireServer(part)
         print("Clicked on Stone part!")
 
         -- Kiểm tra xem con trỏ chuột có đang đặt trên Part không
-        local mouse = Players.LocalPlayer:GetMouse()
-        local _, hitPart = workspace:FindPartOnRayWithIgnoreList(mouse.UnitRay, {Players.LocalPlayer.Character})
-        
-        if hitPart == part and isPartNearPlayer(part) then
-            -- Nếu con trỏ chuột đang đặt trên Part và Part gần người chơi, thực hiện sự kiện click và gửi sự kiện từ xa tới server
+        if isPartNearPlayer(part) then
             local partCFrame = part.CFrame
             local clickPosition = part.Position
 
@@ -60,21 +56,28 @@ local function handleClickAndFireServer(part)
     end
 end
 
--- Sự kiện InputBegan để theo dõi sự kiện click chuột
-UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-    if not gameProcessedEvent then
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local mouse = Players.LocalPlayer:GetMouse()
-            local _, hitPart = workspace:FindPartOnRayWithIgnoreList(mouse.UnitRay, {Players.LocalPlayer.Character})
+-- Sự kiện MouseEnter để theo dõi khi con trỏ chuột bắt đầu nhấn vào Part
+local function handleMouseEnter(part)
+    part.MouseEnter:Connect(function()
+        print("Mouse entered", part.Name)
+        -- Thực hiện xử lý khi con trỏ chuột bắt đầu nhấn vào Part
+        -- (Ví dụ: Gọi handleClickAndFireServer nếu muốn thực hiện sự kiện click)
+        handleClickAndFireServer(part)
+    end)
+end
 
-            -- Kiểm tra xem con trỏ chuột có đang đặt trên Part hay không
-            if hitPart and hitPart:IsA("Part") then
-                local part = hitPart
-                if isPartNearPlayer(part) then
-                    -- Nếu con trỏ chuột đang đặt trên Part và Part gần người chơi, xử lý sự kiện click và gửi sự kiện từ xa tới server
-                    handleClickAndFireServer(part)
-                end
-            end
-        end
+-- Sự kiện MouseLeave để theo dõi khi con trỏ chuột rời khỏi Part
+local function handleMouseLeave(part)
+    part.MouseLeave:Connect(function()
+        print("Mouse left", part.Name)
+        -- Thực hiện xử lý khi con trỏ chuột rời khỏi Part
+    end)
+end
+
+-- Theo dõi sự kiện click chuột cho mỗi Part trong workspace
+for _, part in pairs(workspace:GetDescendants()) do
+    if part:IsA("Part") and part.Name == "Stone" then
+        handleMouseEnter(part)
+        handleMouseLeave(part)
     end
-end)
+end
