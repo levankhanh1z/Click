@@ -1,5 +1,4 @@
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local maxClickDistance = 10
@@ -38,7 +37,7 @@ local function handleClickAndFireServer(part)
             else
                 warn("RemoteEvent 'MineOre' not found.")
             end
-
+               wait(0.1)
             local mineEvent = ReplicatedStorage:FindFirstChild("MineEvent")
             if mineEvent then
                 local args = {partCFrame, clickPosition}
@@ -46,32 +45,26 @@ local function handleClickAndFireServer(part)
             else
                 warn("RemoteEvent 'MineEvent' not found.")
             end
-
-            -- Tìm các Part gần đó và thực hiện sự kiện click cho chúng
-            for _, nearbyPart in pairs(workspace.Mine:GetPartsInRegion(part.Position, Vector3.new(maxClickDistance, maxClickDistance, maxClickDistance), nil)) do
-                if nearbyPart:IsA("Part") and nearbyPart.Name ~= "Stone" then
-                    print("Auto Clicked on Nearby Part:", nearbyPart.Name)
-                    local nearbyPartCFrame = nearbyPart.CFrame
-                    local nearbyClickPosition = nearbyPart.Position
-
-                    -- Thực hiện sự kiện click cho Part bên cạnh
-                    -- (Thêm mã xử lý tương tự như trên cho sự kiện click)
-                end
-            end
         end
     end
 end
 
--- Sự kiện InputBegan để xác định khi người chơi nhấn nút chuột
-UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-    if not gameProcessedEvent then
-        -- Kiểm tra xem người chơi nhấn chuột trái
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            -- Kiểm tra xem Stone nằm trong khoảng cách cho phép
-            if isPartNearPlayer(stonePart) then
-                -- Theo dõi sự kiện click và thực hiện nhanh chóng
-                handleClickAndFireServer(stonePart)
-            end
+local function handleTouched(part)
+    part.Touched:Connect(function(hit)
+        if hit:IsA("Player") then
+            print("Player touched", part.Name)
+            -- Thực hiện sự kiện click khi người chơi chạm vào Part
+            handleClickAndFireServer(part)
         end
+    end)
+end
+
+-- Sự kiện Touched để theo dõi khi người chơi chạm vào Stone
+handleTouched(stonePart)
+
+-- Sự kiện Touched để theo dõi khi người chơi chạm vào các Part bên cạnh
+for _, nearbyPart in pairs(workspace.Mine:GetPartsInRegion(stonePart.Position, Vector3.new(maxClickDistance, maxClickDistance, maxClickDistance), nil)) do
+    if nearbyPart:IsA("Part") and nearbyPart.Name ~= "Stone" then
+        handleTouched(nearbyPart)
     end
-end)
+end
