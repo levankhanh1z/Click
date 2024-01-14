@@ -16,7 +16,7 @@ local function isPartNearPlayer(part)
     return false
 end
 
--- Function để xử lý sự kiện click và gửi cả hai sự kiện từ xa
+-- Function để xử lý sự kiện click và gửi cả ba sự kiện từ xa
 local function handleClickAndFireServer(part)
     local intValue = part:FindFirstChild("IntValue")
     if intValue then
@@ -24,7 +24,7 @@ local function handleClickAndFireServer(part)
         print("Clicked on part with IntValue:", value)
 
         -- Gửi sự kiện từ xa tới server - PinglessMine
-        local pinglessMineEvent = ReplicatedStorage:WaitForChild("PinglessMine")
+        local pinglessMineEvent = ReplicatedStorage:FindFirstChild("PinglessMine")
         if pinglessMineEvent then
             local args = {value}
             pinglessMineEvent:FireServer(unpack(args))
@@ -33,12 +33,21 @@ local function handleClickAndFireServer(part)
         end
 
         -- Gửi sự kiện từ xa tới server - MineOre
-        local mineOreEvent = ReplicatedStorage:WaitForChild("MineOre")
+        local mineOreEvent = ReplicatedStorage:FindFirstChild("MineOre")
         if mineOreEvent then
             local args = {value}
             mineOreEvent:FireServer(unpack(args))
         else
             warn("RemoteEvent 'MineOre' not found.")
+        end
+
+        -- Gửi sự kiện từ xa tới server - MineEvent
+        local mineEvent = ReplicatedStorage:FindFirstChild("MineEvent")
+        if mineEvent then
+            local args = {value}
+            mineEvent:FireServer(unpack(args))
+        else
+            warn("RemoteEvent 'MineEvent' not found.")
         end
     end
 end
@@ -52,7 +61,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
             local part = workspace:FindPartOnRayWithIgnoreList(Ray.new(hit.p, Vector3.new(0, -1, 0)), {Players.LocalPlayer.Character})
 
             if part and isPartNearPlayer(part) then
-                -- Nếu Part gần người chơi, xử lý sự kiện click và gửi cả hai sự kiện từ xa tới server
+                -- Nếu Part gần người chơi, xử lý sự kiện click và gửi cả ba sự kiện từ xa tới server
                 handleClickAndFireServer(part)
             end
         end
