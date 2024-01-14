@@ -1,0 +1,38 @@
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+-- Khoảng cách tối đa để xem xét khi click
+local maxClickDistance = 10
+
+-- Local function để kiểm tra xem một Part có gần người chơi không
+local function isPartNearPlayer(part)
+    local playerPosition = Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and Players.LocalPlayer.Character.HumanoidRootPart.Position
+    if playerPosition then
+        local partPosition = part.Position
+        local distance = (playerPosition - partPosition).Magnitude
+        return distance <= maxClickDistance
+    end
+    return false
+end
+
+-- Local function để xử lý sự kiện click
+local function handleClick(part)
+    print("Clicked on part:", part.Name)
+    -- Thêm logic xử lý khi click vào một Part ở đây
+end
+
+-- Sự kiện InputBegan để theo dõi sự kiện click chuột
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+    if not gameProcessedEvent then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            local mouse = Players.LocalPlayer:GetMouse()
+            local hit = mouse.Hit
+            local part = workspace:FindPartOnRayWithIgnoreList(Ray.new(hit.p, Vector3.new(0, -1, 0)), {Players.LocalPlayer.Character})
+
+            if part and part:IsA("Part") and isPartNearPlayer(part) then
+                -- Nếu Part gần người chơi, xử lý sự kiện click
+                handleClick(part)
+            end
+        end
+    end
+end)
