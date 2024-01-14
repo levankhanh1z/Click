@@ -1,10 +1,11 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Khoảng cách tối đa để xem xét khi click
 local maxClickDistance = 10
 
--- Local function để kiểm tra xem một Part có gần người chơi không
+-- Function để kiểm tra xem một Part có gần người chơi không
 local function isPartNearPlayer(part)
     local playerPosition = Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and Players.LocalPlayer.Character.HumanoidRootPart.Position
     if playerPosition then
@@ -15,13 +16,21 @@ local function isPartNearPlayer(part)
     return false
 end
 
--- Local function để xử lý sự kiện click
-local function handleClick(part)
+-- Function để xử lý sự kiện click và gửi sự kiện từ xa
+local function handleClickAndFireServer(part)
     local intValue = part:FindFirstChild("IntValue")
     if intValue then
         local value = intValue.Value
         print("Clicked on part with IntValue:", value)
-        -- Thêm logic xử lý khi click vào một Part ở đây
+
+        -- Gửi sự kiện từ xa tới server
+        local remoteEvent = ReplicatedStorage:WaitForChild("PinglessMine") -- Đổi tên "PinglessMine" thành tên chính xác của RemoteEvent trong ReplicatedStorage
+        if remoteEvent then
+            local args = {value} -- Đặt tham số cho sự kiện từ xa, có thể điều chỉnh theo cần thiết
+            remoteEvent:FireServer(unpack(args))
+        else
+            warn("RemoteEvent 'PinglessMine' not found.")
+        end
     end
 end
 
@@ -34,8 +43,8 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
             local part = workspace:FindPartOnRayWithIgnoreList(Ray.new(hit.p, Vector3.new(0, -1, 0)), {Players.LocalPlayer.Character})
 
             if part and isPartNearPlayer(part) then
-                -- Nếu Part gần người chơi, xử lý sự kiện click
-                handleClick(part)
+                -- Nếu Part gần người chơi, xử lý sự kiện click và gửi sự kiện từ xa tới server
+                handleClickAndFireServer(part)
             end
         end
     end
