@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local maxClickDistance = 30
+local maxClickDistance = 10
 local stonePart = workspace.Mine.Stone
 
 local function isPartNearPlayer(part)
@@ -45,6 +45,18 @@ local function handleClickAndFireServer(part)
                 mineEvent:FireServer(unpack(args))
             else
                 warn("RemoteEvent 'MineEvent' not found.")
+            end
+
+            -- Tìm các Part gần đó và thực hiện sự kiện click cho chúng
+            for _, nearbyPart in pairs(workspace.Mine:GetPartsInRegion(part.Position, Vector3.new(maxClickDistance, maxClickDistance, maxClickDistance), nil)) do
+                if nearbyPart:IsA("Part") and nearbyPart.Name ~= "Stone" then
+                    print("Auto Clicked on Nearby Part:", nearbyPart.Name)
+                    local nearbyPartCFrame = nearbyPart.CFrame
+                    local nearbyClickPosition = nearbyPart.Position
+
+                    -- Thực hiện sự kiện click cho Part bên cạnh
+                    -- (Thêm mã xử lý tương tự như trên cho sự kiện click)
+                end
             end
         end
     end
