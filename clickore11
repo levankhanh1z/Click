@@ -1,11 +1,8 @@
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- Khoảng cách tối đa để xem xét khi click
 local maxClickDistance = 10
 
--- Function để kiểm tra xem một Part có gần người chơi không
 local function isPartNearPlayer(part)
     local playerPosition = Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and Players.LocalPlayer.Character.HumanoidRootPart.Position
     if playerPosition then
@@ -16,17 +13,14 @@ local function isPartNearPlayer(part)
     return false
 end
 
--- Function để xử lý sự kiện click và gửi sự kiện từ xa
 local function handleClickAndFireServer(part)
     if part.Name == "Stone" then
         print("Clicked on Stone part!")
 
-        -- Kiểm tra xem con trỏ chuột có đang đặt trên Part không
         if isPartNearPlayer(part) then
             local partCFrame = part.CFrame
             local clickPosition = part.Position
 
-            -- Gửi sự kiện từ xa tới server - PinglessMine (ví dụ)
             local pinglessMineEvent = ReplicatedStorage:FindFirstChild("PinglessMine")
             if pinglessMineEvent then
                 local args = {partCFrame, clickPosition}
@@ -35,7 +29,6 @@ local function handleClickAndFireServer(part)
                 warn("RemoteEvent 'PinglessMine' not found.")
             end
 
-            -- Gửi sự kiện từ xa tới server - MineOre (ví dụ)
             local mineOreEvent = ReplicatedStorage:FindFirstChild("MineOre")
             if mineOreEvent then
                 local args = {partCFrame, clickPosition}
@@ -44,7 +37,6 @@ local function handleClickAndFireServer(part)
                 warn("RemoteEvent 'MineOre' not found.")
             end
 
-            -- Gửi sự kiện từ xa tới server - MineEvent (ví dụ)
             local mineEvent = ReplicatedStorage:FindFirstChild("MineEvent")
             if mineEvent then
                 local args = {partCFrame, clickPosition}
@@ -56,28 +48,17 @@ local function handleClickAndFireServer(part)
     end
 end
 
--- Sự kiện MouseEnter để theo dõi khi con trỏ chuột bắt đầu nhấn vào Part
-local function handleMouseEnter(part)
-    part.MouseEnter:Connect(function()
-        print("Mouse entered", part.Name)
-        -- Thực hiện xử lý khi con trỏ chuột bắt đầu nhấn vào Part
-        -- (Ví dụ: Gọi handleClickAndFireServer nếu muốn thực hiện sự kiện click)
-        handleClickAndFireServer(part)
+local function handleTouched(part)
+    part.Touched:Connect(function(hit)
+        if hit:IsA("Player") then
+            print("Player touched", part.Name)
+            handleClickAndFireServer(part)
+        end
     end)
 end
 
--- Sự kiện MouseLeave để theo dõi khi con trỏ chuột rời khỏi Part
-local function handleMouseLeave(part)
-    part.MouseLeave:Connect(function()
-        print("Mouse left", part.Name)
-        -- Thực hiện xử lý khi con trỏ chuột rời khỏi Part
-    end)
-end
-
--- Theo dõi sự kiện click chuột cho mỗi Part trong workspace
 for _, part in pairs(workspace:GetDescendants()) do
     if part:IsA("Part") and part.Name == "Stone" then
-        handleMouseEnter(part)
-        handleMouseLeave(part)
+        handleTouched(part)
     end
 end
