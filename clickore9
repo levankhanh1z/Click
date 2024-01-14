@@ -21,12 +21,12 @@ local function handleClickAndFireServer(part)
     if part.Name == "Stone" then
         print("Clicked on Stone part!")
 
-        -- Kiểm tra CFrame của Part và thực hiện sự kiện click vào CFrame
-        local player = Players.LocalPlayer
-        local character = player.Character
-        local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-
-        if humanoidRootPart then
+        -- Kiểm tra xem con trỏ chuột có đang đặt trên Part không
+        local mouse = Players.LocalPlayer:GetMouse()
+        local _, hitPart = workspace:FindPartOnRayWithIgnoreList(mouse.UnitRay, {Players.LocalPlayer.Character})
+        
+        if hitPart == part and isPartNearPlayer(part) then
+            -- Nếu con trỏ chuột đang đặt trên Part và Part gần người chơi, thực hiện sự kiện click và gửi sự kiện từ xa tới server
             local partCFrame = part.CFrame
             local clickPosition = part.Position
 
@@ -65,12 +65,15 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
     if not gameProcessedEvent then
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             local mouse = Players.LocalPlayer:GetMouse()
-            local hit = mouse.Hit
-            local part = workspace:FindPartOnRayWithIgnoreList(Ray.new(hit.p, Vector3.new(0, -1, 0)), {Players.LocalPlayer.Character})
+            local _, hitPart = workspace:FindPartOnRayWithIgnoreList(mouse.UnitRay, {Players.LocalPlayer.Character})
 
-            if part and isPartNearPlayer(part) then
-                -- Nếu Part gần người chơi và có tên là "Stone", xử lý sự kiện click và gửi sự kiện từ xa tới server
-                handleClickAndFireServer(part)
+            -- Kiểm tra xem con trỏ chuột có đang đặt trên Part hay không
+            if hitPart and hitPart:IsA("Part") then
+                local part = hitPart
+                if isPartNearPlayer(part) then
+                    -- Nếu con trỏ chuột đang đặt trên Part và Part gần người chơi, xử lý sự kiện click và gửi sự kiện từ xa tới server
+                    handleClickAndFireServer(part)
+                end
             end
         end
     end
