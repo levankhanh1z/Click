@@ -18,30 +18,32 @@ end
 
 -- Function để xử lý sự kiện click và gửi sự kiện từ xa
 local function handleClickAndFireServer(part)
-    print("Clicked on part:", part.Name)
+    if part.Name == "Stone" then
+        print("Clicked on Stone part!")
 
-    -- Gửi sự kiện từ xa tới server - PinglessMine
-    local pinglessMineEvent = ReplicatedStorage:FindFirstChild("PinglessMine")
-    if pinglessMineEvent then
-        pinglessMineEvent:FireServer()
-    else
-        warn("RemoteEvent 'PinglessMine' not found.")
-    end
+        -- Gửi sự kiện từ xa tới server - PinglessMine
+        local pinglessMineEvent = ReplicatedStorage:FindFirstChild("PinglessMine")
+        if pinglessMineEvent then
+            pinglessMineEvent:FireServer()
+        else
+            warn("RemoteEvent 'PinglessMine' not found.")
+        end
 
-    -- Gửi sự kiện từ xa tới server - MineOre
-    local mineOreEvent = ReplicatedStorage:FindFirstChild("MineOre")
-    if mineOreEvent then
-        mineOreEvent:FireServer()
-    else
-        warn("RemoteEvent 'MineOre' not found.")
-    end
+        -- Gửi sự kiện từ xa tới server - MineOre
+        local mineOreEvent = ReplicatedStorage:FindFirstChild("MineOre")
+        if mineOreEvent then
+            mineOreEvent:FireServer()
+        else
+            warn("RemoteEvent 'MineOre' not found.")
+        end
 
-    -- Gửi sự kiện từ xa tới server - MineEvent
-    local mineEvent = ReplicatedStorage:FindFirstChild("MineEvent")
-    if mineEvent then
-        mineEvent:FireServer()
-    else
-        warn("RemoteEvent 'MineEvent' not found.")
+        -- Gửi sự kiện từ xa tới server - MineEvent
+        local mineEvent = ReplicatedStorage:FindFirstChild("MineEvent")
+        if mineEvent then
+            mineEvent:FireServer()
+        else
+            warn("RemoteEvent 'MineEvent' not found.")
+        end
     end
 end
 
@@ -54,7 +56,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
             local part = workspace:FindPartOnRayWithIgnoreList(Ray.new(hit.p, Vector3.new(0, -1, 0)), {Players.LocalPlayer.Character})
 
             if part and isPartNearPlayer(part) then
-                -- Nếu Part gần người chơi, xử lý sự kiện click và gửi sự kiện từ xa tới server
+                -- Nếu Part gần người chơi và có tên là "Stone", xử lý sự kiện click và gửi sự kiện từ xa tới server
                 handleClickAndFireServer(part)
             end
         end
