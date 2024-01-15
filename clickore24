@@ -1,9 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
 
 local maxClickDistance = 10
-local pickaxe = game.Workspace.Debris.Plr.tking12z.Pickaxe  -- Điều chỉnh đường dẫn đến Pickaxe của bạn
 local mine = game.Workspace.Mine -- Điều chỉnh đường dẫn đến Mine của bạn
 
 local function isPartNearPlayer(part)
@@ -52,17 +50,9 @@ local function handleClickAndFireServer(part)
     end
 end
 
-local function handleMouseClick()
-    UserInputService.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local mouseTarget = UserInputService.MouseTarget
-            if mouseTarget and mouseTarget:IsA("Part") and mine:FindFirstChild(mouseTarget.Name) then
-                -- Thực hiện sự kiện click khi người chơi click vào Part
-                handleClickAndFireServer(mouseTarget)
-            end
-        end
-    end)
+-- Tự động click vào mỗi Part trong Mine
+for _, part in pairs(mine:GetChildren()) do
+    if part:IsA("Part") then
+        handleClickAndFireServer(part)
+    end
 end
-
--- Theo dõi sự kiện click chuột
-handleMouseClick()
