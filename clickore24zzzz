@@ -1,18 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local maxClickDistance = 1000
 local mine = game.Workspace.Mine -- Điều chỉnh đường dẫn đến Mine của bạn
-
-local function isPartNearPlayer(part)
-    local playerPosition = Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and Players.LocalPlayer.Character.HumanoidRootPart.Position
-    if playerPosition then
-        local partPosition = part.Position
-        local distance = (playerPosition - partPosition).Magnitude
-        return distance <= maxClickDistance
-    end
-    return false
-end
+local pickaxe = game.Workspace.Debris.Plr.tking12z.Pickaxe.Pickaxe
 
 local function handleClickAndFireServer(part)
     print("Auto Clicked on", part.Name)
@@ -48,12 +38,28 @@ local function handleClickAndFireServer(part)
     end
 end
 
--- Tự động click vào mỗi Part trong Mine
-for _, part in pairs(mine:GetChildren()) do
-    if part:IsA("Part") then
-        if isPartNearPlayer(part) then
-            handleClickAndFireServer(part)
-            wait(0.000000000000000000000000001) -- Chờ 0.1 giây trước khi thực hiện sự kiện tiếp theo
+local function handleSelectionChange(partName)
+    if partName then
+        for _, part in pairs(mine:GetChildren()) do
+            if part:IsA("Part") and part.Name == partName then
+                -- Cập nhật SelectionBox của Pickaxe để hiển thị thông tin của Part
+                pickaxe.Selection.Adornee = part
+
+                -- Tự động click vào Part
+                handleClickAndFireServer(part)
+
+                break -- Chỉ xử lý một Part cần click
+            end
         end
     end
 end
+
+-- Theo dõi sự kiện SelectionChanged của SelectionBox
+pickaxe.Selection.SelectionChanged:Connect(function()
+    local selectedAdornee = pickaxe.Selection.Adornee
+    if selectedAdornee and selectedAdornee:IsA("Part") then
+        -- Xử lý thay đổi trong Adornee, ở đây bạn có thể kiểm tra tên của Part và thực hiện hành động tương ứng
+        local partName = selectedAdornee.Name
+        handleSelectionChange(partName)
+    end
+end)
