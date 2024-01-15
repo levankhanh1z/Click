@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local maxClickDistance = 50
+local maxClickDistance = 10
 local mine = game.Workspace.Mine -- Điều chỉnh đường dẫn đến Mine của bạn
 
 local function isPartNearPlayer(part)
@@ -48,11 +48,12 @@ local function handleClickAndFireServer(part)
     end
 end
 
--- Kiểm tra và tự động click vào mỗi Part trong Mine
+-- Tự động click vào mỗi Part trong Mine
 for _, part in pairs(mine:GetChildren()) do
     if part:IsA("Part") then
         if isPartNearPlayer(part) then
             handleClickAndFireServer(part)
+            wait(0.000000000000000000000000001) -- Chờ 0.1 giây trước khi thực hiện sự kiện tiếp theo
         end
     end
 end
