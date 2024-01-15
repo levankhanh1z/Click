@@ -37,10 +37,12 @@ local function handleClickAndFireServer(part)
             else
                 warn("RemoteEvent 'MineOre' not found.")
             end
-               wait(0.1)
+
             local mineEvent = ReplicatedStorage:FindFirstChild("MineEvent")
             if mineEvent then
                 local args = {partCFrame, clickPosition}
+                mineEvent:FireServer(unpack(args))
+                mineEvent:FireServer(unpack(args))
                 mineEvent:FireServer(unpack(args))
             else
                 warn("RemoteEvent 'MineEvent' not found.")
