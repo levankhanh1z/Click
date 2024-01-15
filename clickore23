@@ -52,29 +52,17 @@ local function handleClickAndFireServer(part)
     end
 end
 
-local function handleTouched(part)
-    part.Touched:Connect(function(hit)
-        if hit:IsA("Player") then
-            print("Player touched", part.Name)
-            -- Kiểm tra xem Pickaxe có đang kích hoạt không
-            local character = hit.Character
-            if character and character:FindFirstChild("Humanoid") then
-                local humanoid = character.Humanoid
-                if humanoid:FindFirstChild("Tool") then
-                    local tool = humanoid.Tool
-                    if tool and tool:IsA("Tool") and tool.Name == "Pickaxe" then
-                        -- Thực hiện sự kiện click khi Pickaxe chạm vào Part
-                        handleClickAndFireServer(part)
-                    end
-                end
+local function handleMouseClick()
+    UserInputService.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            local mouseTarget = UserInputService.MouseTarget
+            if mouseTarget and mouseTarget:IsA("Part") and mine:FindFirstChild(mouseTarget.Name) then
+                -- Thực hiện sự kiện click khi người chơi click vào Part
+                handleClickAndFireServer(mouseTarget)
             end
         end
     end)
 end
 
--- Sự kiện Touched để theo dõi khi người chơi chạm vào các Part trong Mine
-for _, part in pairs(mine:GetDescendants()) do
-    if part:IsA("Part") then
-        handleTouched(part)
-    end
-end
+-- Theo dõi sự kiện click chuột
+handleMouseClick()
