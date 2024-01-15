@@ -45,8 +45,11 @@ local function handleSelectionChange(partName)
                 -- Cập nhật SelectionBox của Pickaxe để hiển thị thông tin của Part
                 pickaxe.Selection.Adornee = part
 
-                -- Tự động click vào Part
-                handleClickAndFireServer(part)
+                -- Kiểm tra tên và gọi sự kiện nếu tên giống nhau
+                if pickaxe.Selection.Adornee.Name == part.Name then
+                    -- Tự động click vào Part
+                    handleClickAndFireServer(part)
+                end
 
                 break -- Chỉ xử lý một Part cần click
             end
