@@ -1,8 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local maxClickDistance = 100
-local stonePart = workspace.Mine.Stone
+local maxClickDistance = 10
+local stonePart = game.Workspace.Debris.Plr.tking12z.Pickaxe  -- Điều chỉnh đường dẫn đến Pickaxe của bạn
 
 local function isPartNearPlayer(part)
     local playerPosition = Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and Players.LocalPlayer.Character.HumanoidRootPart.Position
@@ -92,8 +92,15 @@ local function handleTouched(part)
     part.Touched:Connect(function(hit)
         if hit:IsA("Player") then
             print("Player touched", part.Name)
-            -- Thực hiện sự kiện click khi người chơi chạm vào Part
-            handleClickAndFireServer(part)
+            -- Kiểm tra xem nhân vật có cầm Pickaxe không
+            local character = hit.Character
+            if character and character:FindFirstChild("Humanoid") and character.Humanoid:FindFirstChild("Tool") then
+                local tool = character.Humanoid.Tool
+                if tool and tool:IsA("Tool") and tool.Name == "Pickaxe" then
+                    -- Thực hiện sự kiện click khi nhân vật cầm Pickaxe chạm vào Part
+                    handleClickAndFireServer(part)
+                end
+            end
         end
     end)
 end
