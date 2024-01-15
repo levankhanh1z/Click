@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local maxClickDistance = 10
+local maxClickDistance = 1000
 local mine = game.Workspace.Mine -- Điều chỉnh đường dẫn đến Mine của bạn
 
 local function isPartNearPlayer(part)
