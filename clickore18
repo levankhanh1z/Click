@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local maxClickDistance = 10
+local maxClickDistance = 100
 local stonePart = workspace.Mine.Stone
 
 local function isPartNearPlayer(part)
@@ -14,6 +14,24 @@ local function isPartNearPlayer(part)
     return false
 end
 
+local function hasRemoteEvent(part)
+    local remoteEventName = "MineEvent"  -- Thay đổi thành tên sự kiện từ xa bạn đang sử dụng
+    return part:FindFirstChild(remoteEventName) ~= nil
+end
+
+local function getOrCreateRemoteEvent(part)
+    local remoteEventName = "MineEvent"  -- Thay đổi thành tên sự kiện từ xa bạn đang sử dụng
+    local remoteEvent = part:FindFirstChild(remoteEventName)
+    
+    if not remoteEvent then
+        remoteEvent = Instance.new("RemoteEvent")
+        remoteEvent.Name = remoteEventName
+        remoteEvent.Parent = part
+    end
+    
+    return remoteEvent
+end
+
 local function handleClickAndFireServer(part)
     if part.Name == "Stone" then
         print("Auto Clicked on Stone part!")
@@ -22,7 +40,12 @@ local function handleClickAndFireServer(part)
             local partCFrame = part.CFrame
             local clickPosition = part.Position
 
+            local remoteEventName = "MineEvent"  -- Thay đổi thành tên sự kiện từ xa bạn đang sử dụng
+
             local pinglessMineEvent = ReplicatedStorage:FindFirstChild("PinglessMine")
+            local mineOreEvent = ReplicatedStorage:FindFirstChild("MineOre")
+            local mineEvent = getOrCreateRemoteEvent(part)
+
             if pinglessMineEvent then
                 local args = {partCFrame, clickPosition}
                 pinglessMineEvent:FireServer(unpack(args))
@@ -30,7 +53,6 @@ local function handleClickAndFireServer(part)
                 warn("RemoteEvent 'PinglessMine' not found.")
             end
 
-            local mineOreEvent = ReplicatedStorage:FindFirstChild("MineOre")
             if mineOreEvent then
                 local args = {partCFrame, clickPosition}
                 mineOreEvent:FireServer(unpack(args))
@@ -38,14 +60,29 @@ local function handleClickAndFireServer(part)
                 warn("RemoteEvent 'MineOre' not found.")
             end
 
-            local mineEvent = ReplicatedStorage:FindFirstChild("MineEvent")
             if mineEvent then
                 local args = {partCFrame, clickPosition}
                 mineEvent:FireServer(unpack(args))
-                mineEvent:FireServer(unpack(args))
-                mineEvent:FireServer(unpack(args))
             else
-                warn("RemoteEvent 'MineEvent' not found.")
+                warn("RemoteEvent '" .. remoteEventName .. "' not found.")
+            end
+
+            -- Tìm các Part gần đó và thực hiện sự kiện click cho chúng
+            for _, nearbyPart in pairs(workspace.Mine:GetPartsInRegion(part.Position, Vector3.new(maxClickDistance, maxClickDistance, maxClickDistance), nil)) do
+                if nearbyPart:IsA("Part") and nearbyPart.Name ~= "Stone" and hasRemoteEvent(nearbyPart) then
+                    print("Auto Clicked on Nearby Part:", nearbyPart.Name)
+                    local nearbyPartCFrame = nearbyPart.CFrame
+                    local nearbyClickPosition = nearbyPart.Position
+
+                    -- Thực hiện sự kiện click cho Part bên cạnh
+                    local nearbyRemoteEvent = getOrCreateRemoteEvent(nearbyPart)
+                    if nearbyRemoteEvent then
+                        local args = {nearbyPartCFrame, nearbyClickPosition}
+                        nearbyRemoteEvent:FireServer(unpack(args))
+                    else
+                        warn("RemoteEvent '" .. remoteEventName .. "' not found for Nearby Part.")
+                    end
+                end
             end
         end
     end
