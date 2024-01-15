@@ -38,6 +38,31 @@ local function handleClickAndFireServer(part)
             if mineOreEvent then
                 local args = {partCFrame, clickPosition}
                 mineOreEvent:FireServer(unpack(args))
+                 mineOreEvent:FireServer(unpack(args))
+                  mineOreEvent:FireServer(unpack(args))
+                   mineOreEvent:FireServer(unpack(args))
+                    mineOreEvent:FireServer(unpack(args))
+                     mineOreEvent:FireServer(unpack(args))
+                      mineOreEvent:FireServer(unpack(args))
+                       mineOreEvent:FireServer(unpack(args))
+                        mineOreEvent:FireServer(unpack(args))
+                         mineOreEvent:FireServer(unpack(args))
+                          mineOreEvent:FireServer(unpack(args))
+                           mineOreEvent:FireServer(unpack(args))
+
+                            mineOreEvent:FireServer(unpack(args))
+                             mineOreEvent:FireServer(unpack(args))
+                              mineOreEvent:FireServer(unpack(args))
+                               mineOreEvent:FireServer(unpack(args))
+                                mineOreEvent:FireServer(unpack(args))
+                                 mineOreEvent:FireServer(unpack(args))
+                                  mineOreEvent:FireServer(unpack(args))
+                                   mineOreEvent:FireServer(unpack(args))
+                                    mineOreEvent:FireServer(unpack(args))
+                                     mineOreEvent:FireServer(unpack(args))
+                                      mineOreEvent:FireServer(unpack(args))
+                                       mineOreEvent:FireServer(unpack(args))
+                                       
             else
                 warn("RemoteEvent 'MineOre' not found.")
             end
@@ -45,6 +70,7 @@ local function handleClickAndFireServer(part)
             if mineEvent then
                 local args = {partCFrame, clickPosition}
                 mineEvent:FireServer(unpack(args))
+
             else
                 warn("RemoteEvent '" .. remoteEventName .. "' not found.")
             end
