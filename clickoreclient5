@@ -1,0 +1,19 @@
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local pinglessMineEvent = replicatedStorage:WaitForChild("PinglessMine")
+
+-- Đường dẫn đến danh sách các đối tượng trong Mine
+local minePath = game.workspace.Mine
+
+-- Lập danh sách các Part trong Mine
+local mineParts = {"Stone", "Copper", "Copper", "Iron", "Amber", "Cobalt", "Chrysoberyl", "Petrified Wood", "Elusium", "Unobtainium", "Aegistone"}
+for _, child in pairs(minePath:GetChildren()) do
+    -- Kiểm tra nếu đối tượng là Part
+    if child:IsA("Part") then
+        table.insert(mineParts, child)
+    end
+end
+
+-- Gửi sự kiện PinglessMine cho từng Part
+for _, part in ipairs(mineParts) do
+    pinglessMineEvent:FireServer(part)
+end
