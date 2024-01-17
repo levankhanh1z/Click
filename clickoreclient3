@@ -2,6 +2,9 @@ local replicatedStorage = game:GetService("ReplicatedStorage")
 local mineOreFunction = replicatedStorage:WaitForChild("MineOre")
 local pinglessMineEvent = replicatedStorage:WaitForChild("PinglessMine")
 
+-- Lưu trữ tất cả các Part cần xử lý
+local partsToMine = {}
+
 -- Lưu trữ Adornee cũ để so sánh
 local lastAdorneeName = ""
 
@@ -21,25 +24,33 @@ while true do
 
             -- Nếu tên của Adornee và SelectionBox giống nhau
             if adorneeName == selectionBox.Name then
-                -- Gọi RemoteFunction với đối tượng là Adornee của SelectionBox
-                local success, result = pcall(function()
-                    return mineOreFunction:InvokeServer(selectionBox.Adornee)
-                   
-                end)
-
-                if not success then
-                    warn("Error calling MineOre RemoteFunction:", result)
+                -- Thêm Adornee vào mảng nếu chưa có trong đó
+                if not table.find(partsToMine, selectionBox.Adornee) then
+                    table.insert(partsToMine, selectionBox.Adornee)
                 end
 
                 -- Kiểm tra điều kiện giống nhau trước khi gửi sự kiện PinglessMine
-                if result == "SomeCondition" then
+                if someCondition then
                     pinglessMineEvent:FireServer()
-                   
                 end
             end
         end
     else
         -- Nếu không tìm thấy SelectionBox hoặc Adornee, đặt lastAdorneeName về rỗng
         lastAdorneeName = ""
+    end
+
+    -- Kiểm tra và gọi RemoteFunction một lần duy nhất nếu có các Part cần xử lý
+    if #partsToMine > 0 then
+        local success, result = pcall(function()
+            return mineOreFunction:InvokeServer(partsToMine)
+        end)
+
+        if not success then
+            warn("Error calling MineOre RemoteFunction:", result)
+        end
+
+        -- Reset mảng để chuẩn bị cho lần xử lý tiếp theo
+        partsToMine = {}
     end
 end
