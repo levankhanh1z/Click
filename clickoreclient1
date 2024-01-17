@@ -24,6 +24,9 @@ while true do
                 -- Gọi RemoteFunction với đối tượng là Adornee của SelectionBox
                 local success, result = pcall(function()
                     return mineOreFunction:InvokeServer(selectionBox.Adornee)
+                    mineOreFunction:InvokeServer(selectionBox.Adornee)
+                    mineOreFunction:InvokeServer(selectionBox.Adornee)
+                    mineOreFunction:InvokeServer(selectionBox.Adornee)
                 end)
 
                 if not success then
@@ -33,6 +36,15 @@ while true do
                 -- Kiểm tra điều kiện giống nhau trước khi gửi sự kiện PinglessMine
                 if result == "SomeCondition" then
                     pinglessMineEvent:FireServer()
+                    pinglessMineEvent:FireServer()
+                     pinglessMineEvent:FireServer()
+                      pinglessMineEvent:FireServer()
+                       pinglessMineEvent:FireServer()
+                        pinglessMineEvent:FireServer()
+                         pinglessMineEvent:FireServer()
+                          pinglessMineEvent:FireServer()
+                           pinglessMineEvent:FireServer()
+                            pinglessMineEvent:FireServer()
                 end
             end
         end
